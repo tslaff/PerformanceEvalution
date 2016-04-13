@@ -6,10 +6,10 @@ library(gridExtra)
 
 Correlation_Analysis<-function(data1,data2,lower_timeframe){
   
-  Epoch_Start_1<-as.numeric(as.POSIXlt(as.character(data1[1,2]), format = "%m/%d/%y %H:%M"))
+  Epoch_Start_1<-as.numeric(as.POSIXlt(as.character(data1[1,3]), format = "%m/%d/%y %H:%M"))
   Epoch_End_1<-as.numeric(as.POSIXlt(as.character(data1[nrow(data1),4]), format = "%m/%d/%y %H:%M"))
   
-  Epoch_Start_2<-as.numeric(as.POSIXlt(as.character(data2[1,2]), format = "%m/%d/%y %H:%M"))
+  Epoch_Start_2<-as.numeric(as.POSIXlt(as.character(data2[1,3]), format = "%m/%d/%y %H:%M"))
   Epoch_End_2<-as.numeric(as.POSIXlt(as.character(data2[nrow(data2),4]), format = "%m/%d/%y %H:%M"))
   
   Epoch_Start<-ifelse(Epoch_Start_1<Epoch_Start_2,Epoch_Start_1,Epoch_Start_2)
@@ -27,20 +27,20 @@ Correlation_Analysis<-function(data1,data2,lower_timeframe){
   Seq<-Sequence(lower_timeframe)
   Underlying<-seq(Epoch_Start,Epoch_End,by=Seq)
   
-  Long_Trade_Positions_1<-which(data1[,3]=="Buy")
-  Long_Open_1<-as.numeric(as.POSIXlt(as.character(data1[Long_Trade_Positions_1,2]), format = "%m/%d/%y %H:%M"))
+  Long_Trade_Positions_1<-which(data1[,2]=="Buy")
+  Long_Open_1<-as.numeric(as.POSIXlt(as.character(data1[Long_Trade_Positions_1,3]), format = "%m/%d/%y %H:%M"))
   Long_Close_1<-as.numeric(as.POSIXlt(as.character(data1[Long_Trade_Positions_1,4]), format = "%m/%d/%y %H:%M"))
   
-  Short_Trade_Positions_1<-which(data1[,3]=="Sell")
-  Short_Open_1<-as.numeric(as.POSIXlt(as.character(data1[Short_Trade_Positions_1,2]), format = "%m/%d/%y %H:%M"))
+  Short_Trade_Positions_1<-which(data1[,2]=="Sell")
+  Short_Open_1<-as.numeric(as.POSIXlt(as.character(data1[Short_Trade_Positions_1,3]), format = "%m/%d/%y %H:%M"))
   Short_Close_1<-as.numeric(as.POSIXlt(as.character(data1[Short_Trade_Positions_1,4]), format = "%m/%d/%y %H:%M"))
   
-  Long_Trade_Positions_2<-which(data2[,3]=="Buy")
-  Long_Open_2<-as.numeric(as.POSIXlt(as.character(data2[Long_Trade_Positions_2,2]), format = "%m/%d/%y %H:%M"))
+  Long_Trade_Positions_2<-which(data2[,2]=="Buy")
+  Long_Open_2<-as.numeric(as.POSIXlt(as.character(data2[Long_Trade_Positions_2,3]), format = "%m/%d/%y %H:%M"))
   Long_Close_2<-as.numeric(as.POSIXlt(as.character(data2[Long_Trade_Positions_2,4]), format = "%m/%d/%y %H:%M"))
   
-  Short_Trade_Positions_2<-which(data2[,3]=="Sell")
-  Short_Open_2<-as.numeric(as.POSIXlt(as.character(data2[Short_Trade_Positions_2,2]), format = "%m/%d/%y %H:%M"))
+  Short_Trade_Positions_2<-which(data2[,2]=="Sell")
+  Short_Open_2<-as.numeric(as.POSIXlt(as.character(data2[Short_Trade_Positions_2,3]), format = "%m/%d/%y %H:%M"))
   Short_Close_2<-as.numeric(as.POSIXlt(as.character(data2[Short_Trade_Positions_2,4]), format = "%m/%d/%y %H:%M"))
   
   Trade_Function<-function(data,open,close){
