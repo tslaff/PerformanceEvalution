@@ -1,4 +1,7 @@
 <h1>Performance Evalution App</h1>
 
 <p> A web-based app using RShiny to evaluate the performance of your trading strategy.
-Work in progress with full extensive code and readme coming soon!</p>
+Find the correlation between two strategies as well as classify current market
+conditions based on a hidden Markov Model (HMM).
+Find the Shiny App here: https://tadslaff.shinyapps.io/PerformanceEvaluation/
+</p>
