@@ -1,4 +1,4 @@
-shinyUI(navbarPage("Strategy Analysis",
+shinyUI(navbarPage("Strategy Analyses",
   tabPanel("Correlation Analysis",                 
   titlePanel("Correlation Analysis"),
   sidebarPanel(
@@ -16,7 +16,7 @@ shinyUI(navbarPage("Strategy Analysis",
   mainPanel(
     tabsetPanel(
       tabPanel("Plot", plotOutput("contents1")), 
-      tabPanel("Summary", "Correlation:", textOutput("contents2"))
+      tabPanel("Summary", "Correlation:", tableOutput("contents2"))
   )
   )
   ),
@@ -37,25 +37,6 @@ shinyUI(navbarPage("Strategy Analysis",
                          choices = list("RSI" = 1, "CCI" = 2, "Log Returns" = 3), 
                          selected = 2),
              numericInput("indicator_2_period", label = h6("Indicator 2 Period"), value = 14),
-             
-             actionButton("indicator_3", "Add Indicator 3"),
-             conditionalPanel(
-               condition = "input.indicator_3 == true",
-               selectInput("indicator_3", label = h5("Indicator 3"), 
-                           choices = list("RSI" = 1, "CCI" = 2, "Log Returns" = 3,"None"=4), 
-                           selected = 3),
-               numericInput("indicator_3_period", label = h6("Indicator 3 Period"),value = 14)
-             ),
-             br(),
-             br(),
-             actionButton("indicator_4", "Add Indicator 4"),
-             conditionalPanel(
-               condition = "input.indicator_4 == true",
-               selectInput("indicator_4", label = h5("Indicator 4"), 
-                           choices = list("RSI" = 1, "CCI" = 2, "Log Returns" = 3,"ATR"=4), 
-                           selected = 4),
-               numericInput("indicator_4_period", label = h6("Indicator 4 Period"),value = 14)
-                              ),
              br(),
              br(),
              actionButton("indicator_run", "Analyze")
@@ -66,7 +47,6 @@ shinyUI(navbarPage("Strategy Analysis",
            mainPanel(
              plotOutput("Market_Analysis_Test")
            )
-           ),
-  tabPanel("Indicator Selection")
+           )
 ))
 
