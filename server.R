@@ -3,6 +3,7 @@ library(quantmod)
 library(lubridate)
 library(depmixS4)
 library(gridExtra)
+library(repmis)
 
 Correlation_Analysis<-function(data1,data2,lower_timeframe){
   
@@ -145,31 +146,61 @@ Plot_Strategies<-function(correlation_data){
 
 
 
-
+# Shiny server function
 
 shinyServer(function(input, output) {
 
-  
-Correlation_Data<-reactive({
-  Strat1 <- input$file1
-  Strat2 <- input$file2
-  
-  if (is.null(Strat1))
-    return(NULL)
-  
-  if (is.null(Strat2))
-    return(NULL)
 
+  output$loadmessage<-renderText({
+    
+    if (input$loadsampleButton == 1){
+      filename1 <-"Example_Strat_1.csv"
+      mykey1 <- "0teh3k6hybmqruk"
+      Strat1_Data<<-source_DropboxData(filename1,key=mykey1, sep=",", header=TRUE)
+      
+      filename2 <-"Example_Strat_2.csv"
+      mykey2 <- "1qb4jyqfxoyr3ko"
+      Strat2_Data<<-source_DropboxData(filename2,key=mykey2, sep=",", header=TRUE)
+      
+          if((is.null(Strat1_Data))||(is.null(Strat2_Data))){
+            Data_message<-print('Sample data NOT loaded successfully')
+          }
+          else{
+            Data_message<-print('Sample data successfully loaded')}
+    }
+    else{
+      return()
+    }
+    
+    Data_message
+  })    
+
+
+Correlation_Data<-reactive({
   
-  Strat1_Data<-read.csv(Strat1$datapath,header=TRUE, sep=',')
-  Strat2_Data<-read.csv(Strat2$datapath, header=TRUE, sep=',')
+  if((is.null(Strat1_Data))||is.null(is.null(Strat2_Data))){
+      Strat1 <- input$file1
+      Strat2 <- input$file2
+      
+      if (is.null(Strat1))
+        return(NULL)
+      
+      if (is.null(Strat2))
+        return(NULL)
+      
+      Strat1_Data<-read.csv(Strat1$datapath,header=TRUE, sep=',')
+      Strat2_Data<-read.csv(Strat2$datapath, header=TRUE, sep=',')
+    }
   
   Strategy_Correlation<-Correlation_Analysis(Strat1_Data,Strat2_Data,input$period)
   
   Strategy_Correlation
-})
+    
+  })
   
-  output$contents2<-renderTable({
+
+  
+output$contents2<-renderTable({
     
     if (input$goButton == 0)
       return()
@@ -180,33 +211,50 @@ Correlation_Data<-reactive({
     
   })
 
-output$contents1 <- renderPlot({
+output$contents1<-renderPlot({
   
   if (input$goButton == 0)
     return()
   
-  Output_1<-Correlation_Data();
-  Output_2<-as.data.frame(Output_1[[1]])
+  Output_11<-Correlation_Data();
+  Output_2<-as.data.frame(Output_11[[1]])
   Function_Data<-Output_2
   Plot_Strategies(Function_Data)
-        
 })
+
+output$loadmessage_ohlc<-renderText({
+  if (input$loadsampleButton_ohlc == 1){
+    filename_ohlc <-"Sample_Market_Data.csv"
+    mykey_ohlc <- "sz9wgc4r1f3rwvr"
+    OHLC_Data<<-source_DropboxData(filename_ohlc,key=mykey_ohlc, sep=",", header=TRUE)
+    
+    if((is.null(OHLC_Data))){
+      OHLC_Data_message<-print('Sample data NOT loaded successfully')
+    }
+    else{
+      OHLC_Data_message<-print('Sample data successfully loaded')}
+  }
+  else{
+    return()
+  }
   
-Market_Analysis_Data<-reactive({
-  OHLC <- input$ohlc
-  if (is.null(OHLC))
-    return(NULL)
-  
-  OHLC_Data<-read.csv(OHLC$datapath, header=TRUE, sep=',')
-  
+  OHLC_Data_message
 })
+
 
 output$Market_Analysis_Test<-renderPlot({
   
   if (input$indicator_run == 0)
     return()
   
-  Market_df<-Market_Analysis_Data();
+    if(is.null(OHLC_Data)){
+    OHLC <- input$ohlc
+    if (is.null(OHLC))
+      return(NULL)
+    OHLC_Data<-read.csv(OHLC$datapath, header=TRUE, sep=',')
+    }
+  
+  Market_df<-OHLC_Data;
   Time<-as.POSIXlt(Market_df[,1], format = "%m/%d/%y %H:%M",tz="GMT")
   Market_xts<-as.xts(data.frame(Market_df[,2:5],row.names=Time))
   
@@ -227,20 +275,10 @@ output$Market_Analysis_Test<-renderPlot({
            "4" = ATR(HLC[,2:4], n=input$indicator_2_period))
   }
   
-  Indicator_3_Data<-function(HLC){
-    switch(input$indicator_3,
-           "1" = RSI(HLC[,4],n=input$indicator_3_period),
-           "2" = CCI(HLC[,2:4],n=input$indicator_3_period),
-           "3" = log(HLC[,4])-log(HLC[,2]),
-           "4" = ATR(HLC[,2:4], n=input$indicator_3_period))
-  }
-  
   
   I1<-Indicator_1_Data(Market_xts);
   I2<-Indicator_2_Data(Market_xts);
-  I3<-Indicator_3_Data(Market_xts);
   
- 
   Indicator_Data<-na.omit(data.frame(I1,I2));
   col_n_1<-as.character("Ind_1");
   col_n_2<-as.character("Ind_2");
