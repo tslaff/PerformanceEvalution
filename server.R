@@ -4,6 +4,7 @@ library(lubridate)
 library(depmixS4)
 library(gridExtra)
 library(repmis)
+library(shinyBS)
 
 Correlation_Analysis<-function(data1,data2,lower_timeframe){
   
@@ -226,7 +227,8 @@ output$loadmessage_ohlc<-renderText({
   if (input$loadsampleButton_ohlc == 1){
     filename_ohlc <-"Sample_Market_Data.csv"
     mykey_ohlc <- "sz9wgc4r1f3rwvr"
-    OHLC_Data<<-source_DropboxData(filename_ohlc,key=mykey_ohlc, sep=",", header=TRUE)
+    OHLC_Data<-source_DropboxData(filename_ohlc,key=mykey_ohlc, sep=",", header=TRUE)
+    OHLC_Data<<-OHLC_Data[1:(.6*nrow(OHLC_Data)),]
     
     if((is.null(OHLC_Data))){
       OHLC_Data_message<-print('Sample data NOT loaded successfully')
